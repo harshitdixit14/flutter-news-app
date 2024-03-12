@@ -4,6 +4,8 @@ import 'package:news_app/helper/data.dart';
 import 'package:news_app/models/category_model.dart';
 import 'package:news_app/models/article_model.dart';
 import 'package:news_app/helper/news.dart';
+import 'package:news_app/views/article_view.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -68,6 +70,7 @@ class _State extends State<Home> {
                Container(
                     padding:EdgeInsets.only(top:16),
                     child: ListView.builder(
+                      physics: ClampingScrollPhysics(),
                       itemCount: articles.length,
                       shrinkWrap: true,
                       itemBuilder: (context,index){
@@ -75,7 +78,7 @@ class _State extends State<Home> {
                           imageUrl: articles[index].urlToImage,
                           title:articles[index].title,
                           desc:articles[index].description,
-                          
+                          url:articles[index].url,
                         );
                       }),
                   ),
@@ -117,19 +120,41 @@ class CategoryTile extends StatelessWidget{
   }
 }
 class BlogTile extends StatelessWidget{
-  final imageUrl,title,desc;
-  BlogTile({@required this.imageUrl,@required this.title,@required this.desc});
+  final imageUrl,title,desc,url;
+  BlogTile({@required this.imageUrl,@required this.title,@required this.desc,@required this.url});
   @override
   Widget build(BuildContext context)
   {
-    return  Container(
-        child:Column(
-          children: <Widget>[
-            Image.network(imageUrl),
-            Text(title),
-            Text(desc),
-          ],
-        )
+    return  GestureDetector(
+      onTap: (){
+        Navigator.push(context,MaterialPageRoute(
+          builder: (context)=>ArticleView(
+            blogUrl: url,
+          )
+          ));
+      },
+      child: Container(
+        margin:EdgeInsets.only(bottom:16),
+      
+          child:Column(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(imageUrl,width: 400,),
+                ),
+              SizedBox(height: 8,),
+              Text(title,style:TextStyle(
+                fontSize: 17,
+                color:Colors.black54,
+                fontWeight: FontWeight.w600,
+              )),
+              SizedBox(height: 8,),
+              Text(desc,style:TextStyle(
+                color:Colors.grey,
+              )),
+            ],
+          )
+      ),
     );
   }
 }
